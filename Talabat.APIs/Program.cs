@@ -7,7 +7,7 @@ namespace Talabat.APIs
 	{
 		public static void Main(string[] args)
 		{
-			//hell Dev
+			//hell session1
 			#region Configuration Service
 			var builder = WebApplication.CreateBuilder(args);
 
