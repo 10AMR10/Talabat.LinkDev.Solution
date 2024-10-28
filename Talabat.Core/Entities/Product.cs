@@ -15,15 +15,15 @@ namespace Talabat.Core.Entities
 		public string PictureUrl { get; set; }
 		//create navigaitonal propery (product has one brand,brand has many products) <summary>
 		//[InverseProperty(nameof(ProductCategory.Products))] we don't have products so we will make it by fluent api
-		public ProductBrand Brand { get; set; }
+		public virtual ProductBrand Brand { get; set; }
 		//[ForeignKey(nameof(Product.Brand))]  we will make it by fluent api
-		public string BrandId { get; set; }
+		public int BrandId { get; set; }
 
 		//create navigaitonal propery (product has one category,category has many products)
 		//[InverseProperty(nameof(ProductCategory.Products))] we don't have products so we will make it by fluent api
 
-		public ProductCategory Category { get; set; }
+		public virtual ProductCategory Category { get; set; }
 		/*[ForeignKey(nameof(Product.Brand))]*/ // we will make it by fluent api
-		public string CategoryId { get; set; }
+		public int CategoryId { get; set; }
     }
 }
