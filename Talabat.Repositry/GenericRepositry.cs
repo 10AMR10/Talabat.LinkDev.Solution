@@ -26,7 +26,7 @@ namespace Talabat.Repositry
 			//		.Include(x => x.Category).FirstOrDefaultAsync()as T;
 			return await _storeContext.Set<T>().FindAsync(id);
 		}
-		public async Task<IEnumerable<T>> GetAllAsync()
+		public async Task<IReadOnlyList<T>> GetAllAsync()
 		{
 			//if (typeof(T) == typeof(Product))
 			//	return (IEnumerable<T>)await _storeContext.Set<Product>().Include(x => x.Brand)
@@ -39,7 +39,7 @@ namespace Talabat.Repositry
 		{
 			return await ApplicationSpecifications(spec).AsNoTracking().FirstOrDefaultAsync();
 		}
-		public async Task<IEnumerable<T>> GetAllSpecificAsync(ISpecification<T> spec)
+		public async Task<IReadOnlyList<T>> GetAllSpecificAsync(ISpecification<T> spec)
 		{
 			return await ApplicationSpecifications(spec).AsNoTracking().ToListAsync();
 

@@ -28,11 +28,11 @@ namespace Talabat.APIs.Controllers
 			_categoryRepo = categoryRepo;
 		}
 		[HttpGet]
-		public async Task<ActionResult<IEnumerable<ProductToReturnDto>>> GetAllProducts()
+		public async Task<ActionResult<IReadOnlyList<ProductToReturnDto>>> GetAllProducts()
 		{
 			var spec = new ProductWithBrandAndCategory(); // get all products 
 			var products = await _productRepo.GetAllSpecificAsync(spec);
-			return Ok(_mapper.Map<IEnumerable<ProductToReturnDto>>(products));
+			return Ok(_mapper.Map<IReadOnlyList<ProductToReturnDto>>(products));
 		}
 		[HttpGet("{id}")]
 		public async Task<ActionResult<ProductToReturnDto>> GetProduct(int id)
@@ -44,7 +44,7 @@ namespace Talabat.APIs.Controllers
 			return Ok(_mapper.Map<Product, ProductToReturnDto>(product));
 		}
 		[HttpGet("Brand")]
-		public async Task<ActionResult<IEnumerable<ProductBrand>>> GetALLBrands()
+		public async Task<ActionResult<IReadOnlyList<ProductBrand>>> GetALLBrands()
 		{
 			var brands=await _brandRepo.GetAllAsync();
 			if (brands is null)
@@ -60,7 +60,7 @@ namespace Talabat.APIs.Controllers
 			return Ok(brand);
 		}
 		[HttpGet("Category")]
-		public async Task<ActionResult<IEnumerable<ProductCategory>>> GetALLCategories()
+		public async Task<ActionResult<IReadOnlyList<ProductCategory>>> GetALLCategories()
 		{
 			var categories = await _categoryRepo.GetAllAsync();
 			if (categories is null)
