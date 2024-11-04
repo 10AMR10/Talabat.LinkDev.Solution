@@ -10,8 +10,21 @@ namespace Talabat.Core.Products_Specific
 {
 	public class ProductWithBrandAndCategory : BaseSpecification<Product>
 	{
-		public ProductWithBrandAndCategory() : base()
+		public ProductWithBrandAndCategory(string sort) : base()
 		{
+			switch (sort)
+			{
+				case "price":
+					OrderBy = p => p.Price;
+					break;
+				case "priceDesc":
+					OrderByDesc = p => p.Price;
+					break;
+				default:
+					OrderBy = p => p.Name;
+					break;
+			}
+
 			AddIncludes();
 		}
 

@@ -22,15 +22,16 @@ namespace Talabat.Repositry
 		public async Task<T?> GetAsync(int id)
 		{
 			//if (typeof(T) == typeof(Product))
-			//	return await _storeContext.Set<Product>().Where(x => x.Id == id).Include(x => x.Brand)
+			//return await _storeContext.Set<Product>().Where(x => x.Id == id).Include(x => x.Brand)
 			//		.Include(x => x.Category).FirstOrDefaultAsync()as T;
+			
 			return await _storeContext.Set<T>().FindAsync(id);
 		}
 		public async Task<IReadOnlyList<T>> GetAllAsync()
 		{
 			//if (typeof(T) == typeof(Product))
 			//	return (IEnumerable<T>)await _storeContext.Set<Product>().Include(x => x.Brand)
-			//		.Include(x => x.Category).AsNoTracking().ToListAsync();
+			//		.Include(x => x.Category).orderBy(x=>x.price).AsNoTracking().ToListAsync();
 			return await _storeContext.Set<T>().AsNoTracking().ToListAsync();
 		}
 

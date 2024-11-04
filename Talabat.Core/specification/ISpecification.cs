@@ -13,6 +13,9 @@ namespace Talabat.Core.specification
 		//Signeture property
         public Expression<Func<T,bool>>? Criteria { get; set; }
         public List<Expression<Func<T,object>>> Includes { get; set; } // out of func be BaseEntity if return only brand and catergory but if i return either and collection i will use object the parent of all 
+        public Expression<Func<T,object>> OrderBy { get; set; }
+		public Expression<Func<T, object>> OrderByDesc { get; set; }
 
-    }
+
+	}
 }
