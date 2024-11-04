@@ -21,7 +21,7 @@ namespace Talabat.Repositry
 			// List<Includes> = {x=>x.Brand, x=>x.Category}
 			if(spec.OrderBy is not null)
 				query= query.OrderBy(spec.OrderBy);
-			else
+			if (spec.OrderByDesc is not null)
 				query = query.OrderByDescending(spec.OrderByDesc);
 			query = spec.Includes.Aggregate(query,(currentQuery,includeExpression)=> currentQuery.Include(includeExpression));
 			// 1. _storeContext.Set<Product>().Where(x => x.Id == id).Include(x=> x.Brand)

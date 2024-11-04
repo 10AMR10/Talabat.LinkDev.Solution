@@ -10,20 +10,27 @@ namespace Talabat.Core.Products_Specific
 {
 	public class ProductWithBrandAndCategory : BaseSpecification<Product>
 	{
-		public ProductWithBrandAndCategory(string sort) : base()
+		public ProductWithBrandAndCategory(string? sort, int? brandId, int? categoryId) : 
+			base( p=>
+				 (!brandId.HasValue || p.BrandId==brandId) &&(!categoryId.HasValue||p.CategoryId==categoryId)
+				)
 		{
-			switch (sort)
+			if (!string.IsNullOrEmpty(sort))
 			{
-				case "price":
-					OrderBy = p => p.Price;
-					break;
-				case "priceDesc":
-					OrderByDesc = p => p.Price;
-					break;
-				default:
-					OrderBy = p => p.Name;
-					break;
+				switch (sort)
+				{
+					case "price":
+						OrderBy = p => p.Price;
+						break;
+					case "priceDesc":
+						OrderByDesc = p => p.Price;
+						break;
+					default:
+						OrderBy = p => p.Name;
+						break;
+				} 
 			}
+
 
 			AddIncludes();
 		}
