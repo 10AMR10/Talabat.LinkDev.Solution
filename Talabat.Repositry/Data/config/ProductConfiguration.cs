@@ -24,7 +24,7 @@ namespace Talabat.Repositry.Data.config
 				.WithMany(/*x=>x.Products*/)
 				.HasForeignKey(x => x.BrandId);
 			//create the realtion (produt, produtcategory)
-			builder.HasOne(x=>x.CategoryId)
+			builder.HasOne(x=>x.Category)
 				.WithMany(/*x=>x.Products*/)
 				.HasForeignKey(x=>x.CategoryId);
 

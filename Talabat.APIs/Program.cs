@@ -1,13 +1,19 @@
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Talabat.APIs.Errors;
+using Talabat.APIs.Helpers;
+using Talabat.APIs.Middelwares;
+using Talabat.Core.repositry.contract;
+using Talabat.Repositry;
 using Talabat.Repositry.Data;
 
 namespace Talabat.APIs
 {
 	public class Program
 	{
-		public static void Main(string[] args)
+		public async static Task Main(string[] args)
 		{
-			//hell Dev
+
 			#region Configuration Service
 			var builder = WebApplication.CreateBuilder(args);
 
@@ -20,18 +26,59 @@ namespace Talabat.APIs
 			// AddDbContex it follow sql server package so we should take referance from repositry
 			builder.Services.AddDbContext<StoreContex>((option) =>
 			{
-				option.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
+				option.UseLazyLoadingProxies()
+				.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
+			});
+			builder.Services.AddScoped(typeof(IGenericRepositry<>), typeof(GenericRepositry<>));
+			builder.Services.AddAutoMapper(typeof(MappingProfiles));
+			builder.Services.Configure<ApiBehaviorOptions>((option) =>
+			{
+				option.InvalidModelStateResponseFactory = (actionContext) =>
+				{
+					var Errors = actionContext.ModelState.Where(x => x.Value.Errors.Count() > 0)
+						.SelectMany(e => e.Value.Errors)
+						.Select(m => m.ErrorMessage).ToList();
+					var response = new ValidationErrorApiResponse()
+					{
+						errors = Errors
+					};
+					return new BadRequestObjectResult(response);
+				};
 			});
 			#endregion
 
 			var app = builder.Build();
+			#region update database explictly
+			using var scope = app.Services.CreateScope(); //using keyword => to dispose scope or dispose all object that order from scope
+														  //container has all services with life time scope
+			var service = scope.ServiceProvider;
+			//use to take object from this container
+			var _dbcontext = service.GetRequiredService<StoreContex>();
+			//ask clr to create object from DbContext explictly
+			var loggerFactory = service.GetRequiredService<ILoggerFactory>();
+			try
+			{
+				await _dbcontext.Database.MigrateAsync();
+				await StoreContextSeeding.SeedingAsync(_dbcontext);
+			}
+			catch (Exception ex)
+			{
+				var logger = loggerFactory.CreateLogger<Program>();
+				logger.LogError(ex, "error when appling migration");
+
+			}
+
+			#endregion
 
 			// Configure the HTTP request pipeline.
 			if (app.Environment.IsDevelopment())
 			{
+				app.UseMiddleware<ExceptionMiddelware>();
 				app.UseSwagger();
 				app.UseSwaggerUI();
 			}
+			app.UseStaticFiles();
+			app.UseStatusCodePagesWithReExecute("/errors/{0}");
 
 			app.UseHttpsRedirection();
 
