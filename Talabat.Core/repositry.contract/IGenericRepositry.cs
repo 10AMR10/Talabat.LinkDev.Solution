@@ -14,5 +14,6 @@ namespace Talabat.Core.repositry.contract
 		public  Task<IReadOnlyList<T>> GetAllAsync();
 		public Task<T?> GetSpecificAsync(ISpecification<T> spec);
 		public Task<IReadOnlyList<T>> GetAllSpecificAsync(ISpecification<T> spec);
+		public Task<int> CountAllAsync(ISpecification<T> spec);
 	}
 }

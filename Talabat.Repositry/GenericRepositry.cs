@@ -31,7 +31,7 @@ namespace Talabat.Repositry
 		{
 			//if (typeof(T) == typeof(Product))
 			//	return (IEnumerable<T>)await _storeContext.Set<Product>().Include(x => x.Brand)
-			//		.Include(x => x.Category).orderBy(x=>x.price).AsNoTracking().ToListAsync();
+			//		.Include(x => x.Category).orderBy(x=>x.price).skip(int).take(int).AsNoTracking().ToListAsync();
 			return await _storeContext.Set<T>().AsNoTracking().ToListAsync();
 		}
 
@@ -48,6 +48,11 @@ namespace Talabat.Repositry
 		private IQueryable<T> ApplicationSpecifications(ISpecification<T> spec)
 		{
 			return SpecificEvaluator<T>.GetQuery(_storeContext.Set<T>(), spec);
+		}
+
+		public async Task<int> CountAllAsync(ISpecification<T> spec)
+		{
+			return await ApplicationSpecifications(spec).CountAsync();
 		}
 	}
 }

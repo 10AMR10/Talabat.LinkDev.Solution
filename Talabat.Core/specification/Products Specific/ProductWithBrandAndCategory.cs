@@ -5,32 +5,35 @@ using System.Text;
 using System.Threading.Tasks;
 using Talabat.Core.Entities;
 using Talabat.Core.specification;
+using Talabat.Core.specification.Products_Specific;
 
 namespace Talabat.Core.Products_Specific
 {
 	public class ProductWithBrandAndCategory : BaseSpecification<Product>
 	{
-		public ProductWithBrandAndCategory(string? sort, int? brandId, int? categoryId) : 
-			base( p=>
-				 (!brandId.HasValue || p.BrandId==brandId) &&(!categoryId.HasValue||p.CategoryId==categoryId)
+		public ProductWithBrandAndCategory(ProductSpecPrams productPrams) :
+			base(p =>
+				 (!productPrams.BrandId.HasValue || p.BrandId == productPrams.BrandId) && (!productPrams.CategoryId.HasValue || p.CategoryId == productPrams.CategoryId)
 				)
 		{
-			if (!string.IsNullOrEmpty(sort))
+			if (!string.IsNullOrEmpty(productPrams.Sort))
 			{
-				switch (sort)
+				switch (productPrams.Sort)
 				{
 					case "price":
-						OrderBy = p => p.Price;
+						AddOrderBy(p => p.Price);
 						break;
 					case "priceDesc":
-						OrderByDesc = p => p.Price;
+						AddOrderByDesc(p => p.Price);
 						break;
 					default:
-						OrderBy = p => p.Name;
+						AddOrderBy(p => p.Name);
 						break;
-				} 
+				}
 			}
+			// pagesize=4 pageIndex=2
 
+			AddPagination((productPrams.PageIndex-1)*productPrams.PageSize,productPrams.PageSize);
 
 			AddIncludes();
 		}

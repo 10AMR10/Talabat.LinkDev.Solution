@@ -3,10 +3,12 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Talabat.APIs.Dtos;
 using Talabat.APIs.Errors;
+using Talabat.APIs.Helpers;
 using Talabat.Core.Entities;
 using Talabat.Core.Products_Specific;
 using Talabat.Core.repositry.contract;
 using Talabat.Core.specification;
+using Talabat.Core.specification.Products_Specific;
 using Talabat.Repositry;
 
 namespace Talabat.APIs.Controllers
@@ -27,12 +29,18 @@ namespace Talabat.APIs.Controllers
 			_brandRepo = brandRepo;
 			_categoryRepo = categoryRepo;
 		}
-		[HttpGet]
-		public async Task<ActionResult<IReadOnlyList<ProductToReturnDto>>> GetAllProducts(string? sort, int? brandId, int? categoryId)
+		
+		[HttpGet] // the body of get => query string so => [FromQuery]
+		public async Task<ActionResult<Pagination<ProductToReturnDto>>> GetAllProducts([FromQuery] ProductSpecPrams productPrams) // uncle bob say more than 3 prams make class and make the object of these 3 prams
 		{
-			var spec = new ProductWithBrandAndCategory(sort,brandId,categoryId); // get all products 
+			var spec = new ProductWithBrandAndCategory(productPrams); // get all products 
 			var products = await _productRepo.GetAllSpecificAsync(spec);
-			return Ok(_mapper.Map<IReadOnlyList<ProductToReturnDto>>(products));
+			var mapped = _mapper.Map<IReadOnlyList<ProductToReturnDto>>(products);
+			var countSpec = new ProductCountSpecification(productPrams);
+			var CountAfterFilteration = await _productRepo.CountAllAsync(countSpec);
+			var productPaginations = new Pagination<ProductToReturnDto>(productPrams.PageSize, productPrams.PageIndex, mapped, CountAfterFilteration);
+
+			return Ok(productPaginations);
 		}
 		[HttpGet("{id}")]
 		public async Task<ActionResult<ProductToReturnDto>> GetProduct(int id)
