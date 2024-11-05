@@ -21,6 +21,7 @@ namespace Talabat.Core.specification.Products_Specific
 		}
 
 		public int PageIndex { get; set; } = 1; // must set defult value 
+        public string?  Search { get; set; }
 
     }
 }

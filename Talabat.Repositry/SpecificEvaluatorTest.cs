@@ -9,15 +9,15 @@ using Talabat.Core.SpecificationTest;
 
 namespace Talabat.Repositry
 {
-	internal class SpecificEvaluatorTest<T> where T : BaseEntity
+	public class SpecificEvaluatorTest<T> where T : BaseEntity
 	{
-		public static IQueryable<T> GetQuery(IQueryable<T> input,ISpecificationTest<T> spec)
+		public static IQueryable<T> GetQuery(IQueryable<T> input, ISpecificationTest<T> spec)
 		{
 			var query = input;
-			if(spec.Criteria is not null)
-				query=query.Where(spec.Criteria);
-			
-			query = spec.Includes.Aggregate(query, (a, b) => a.Include(b));
+			if (spec.Criteria is not null)
+				query = query.Where(spec.Criteria);
+			if (spec.Includes is not null)
+				query = spec.Includes.Aggregate(query, (currentQuery, includeExpression) => currentQuery.Include(includeExpression));
 			//1. storeContext.Set<Product>()
 			//2. storeContext.Set<Product>().include(1)
 			//3. storeContext.Set<Product>().include(1).include(2)

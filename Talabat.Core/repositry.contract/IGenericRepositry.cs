@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Talabat.Core.Entities;
 using Talabat.Core.specification;
+using Talabat.Core.SpecificationTest;
 
 namespace Talabat.Core.repositry.contract
 {
@@ -15,5 +16,7 @@ namespace Talabat.Core.repositry.contract
 		public Task<T?> GetSpecificAsync(ISpecification<T> spec);
 		public Task<IReadOnlyList<T>> GetAllSpecificAsync(ISpecification<T> spec);
 		public Task<int> CountAllAsync(ISpecification<T> spec);
+		public Task<T?> GetSpecificAsyncTest(ISpecificationTest<T> spec);
+		public Task<IReadOnlyList<T>> GetAllSpecificAsyncTest(ISpecificationTest<T> spec);
 	}
 }

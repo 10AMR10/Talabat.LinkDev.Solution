@@ -10,10 +10,12 @@ using Talabat.Core.specification.Products_Specific;
 namespace Talabat.Core.Products_Specific
 {
 	public class ProductWithBrandAndCategory : BaseSpecification<Product>
-	{
+	{	
 		public ProductWithBrandAndCategory(ProductSpecPrams productPrams) :
 			base(p =>
-				 (!productPrams.BrandId.HasValue || p.BrandId == productPrams.BrandId) && (!productPrams.CategoryId.HasValue || p.CategoryId == productPrams.CategoryId)
+			(string.IsNullOrEmpty(productPrams.Search)) || p.Name.ToLower().Contains(productPrams.Search.ToLower()) &&
+				 (!productPrams.BrandId.HasValue || p.BrandId == productPrams.BrandId)   && 
+			(!productPrams.CategoryId.HasValue || p.CategoryId == productPrams.CategoryId)
 				)
 		{
 			if (!string.IsNullOrEmpty(productPrams.Sort))

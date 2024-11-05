@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using Talabat.Core.Entities;
 using Talabat.Core.repositry.contract;
 using Talabat.Core.specification;
+using Talabat.Core.SpecificationTest;
 using Talabat.Repositry.Data;
 
 namespace Talabat.Repositry
@@ -30,7 +31,7 @@ namespace Talabat.Repositry
 		public async Task<IReadOnlyList<T>> GetAllAsync()
 		{
 			//if (typeof(T) == typeof(Product))
-			//	return (IEnumerable<T>)await _storeContext.Set<Product>().Include(x => x.Brand)
+			//	return (IEnumerable<T>)await _storeContext.Set<Product>().orderBy(x=>x.price).Include(x => x.Brand)
 			//		.Include(x => x.Category).orderBy(x=>x.price).skip(int).take(int).AsNoTracking().ToListAsync();
 			return await _storeContext.Set<T>().AsNoTracking().ToListAsync();
 		}
@@ -54,5 +55,25 @@ namespace Talabat.Repositry
 		{
 			return await ApplicationSpecifications(spec).CountAsync();
 		}
+
+		#region Test
+		public async Task<T?> GetSpecificAsyncTest(ISpecificationTest<T> spec)
+		{
+			return await ApplySpecificatoinTest(spec).FirstOrDefaultAsync();
+		}
+
+		public async Task<IReadOnlyList<T>> GetAllSpecificAsyncTest(ISpecificationTest<T> spec)
+		{
+			// _storeContext.Set<T>().where (x=> x.id=id) . Include(brandId). Include(categoryId)
+			return await ApplySpecificatoinTest(spec).ToListAsync();
+
+		}
+
+		private IQueryable<T> ApplySpecificatoinTest(ISpecificationTest<T> spec)
+		{
+			return SpecificEvaluatorTest<T>.GetQuery(_storeContext.Set<T>(), spec);
+		}
+		
+		#endregion
 	}
 }

@@ -12,6 +12,7 @@ namespace Talabat.Core.specification.Products_Specific
         // barndID , categoryId
         public ProductCountSpecification(ProductSpecPrams productPrams)
             :base(p=>
+                  (string.IsNullOrEmpty(productPrams.Search))|| p.Name.ToLower().Contains(productPrams.Search.ToLower())  &&              
                  (!productPrams.BrandId.HasValue || p.BrandId==productPrams.BrandId)  &&
                 (!productPrams.CategoryId.HasValue || p.CategoryId==productPrams.CategoryId ) 
             )
