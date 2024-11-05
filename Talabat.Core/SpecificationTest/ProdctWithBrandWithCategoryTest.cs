@@ -3,16 +3,31 @@ using Talabat.Core.Entities;
 
 namespace Talabat.Core.SpecificationTest
 {
-	public class prodctWithBrandWithCategoryTest:BaseSpecificationTest<Product>
+	public class prodctWithBrandWithCategoryTest : BaseSpecificationTest<Product>
 	{
-        public prodctWithBrandWithCategoryTest():base()
+	// done
+		public prodctWithBrandWithCategoryTest(string sort) : base()
 		{
+			if (!string.IsNullOrEmpty(sort))
+			{
+				switch (sort)
+				{
+					case "price":
+						AddOrderBy( p => p.Price);
+						break;
+					case "priceDesc":
+						AddOrderByDesc(p => p.Price);
+						break;
+				}
+			}
+			OrderBy = p => p.Name;
 			AddIncludes();
 		}
 
 
-		public prodctWithBrandWithCategoryTest(int id):base(p=> p.Id==id) 
-        {
+		public prodctWithBrandWithCategoryTest(int id) : base(p => p.Id == id)
+
+		{
 			AddIncludes();
 		}
 		private void AddIncludes()
@@ -21,5 +36,5 @@ namespace Talabat.Core.SpecificationTest
 			Includes.Add(p => p.CategoryId);
 		}
 
-    }
+	}
 }
