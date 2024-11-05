@@ -19,7 +19,14 @@ namespace Talabat.Repositry
 				query= query.Where(spec.Criteria); //_storeContext.Set<Product>().Where(x => x.Id == id)
 			// using Aggregat function to apply the list of include
 			// List<Includes> = {x=>x.Brand, x=>x.Category}
-			 query = spec.Includes.Aggregate(query,(currentQuery,includeExpression)=> currentQuery.Include(includeExpression));
+			if(spec.OrderBy is not null)
+				query= query.OrderBy(spec.OrderBy);
+			if (spec.OrderByDesc is not null)
+				query = query.OrderByDescending(spec.OrderByDesc);
+			if(spec.IsPagination==true)
+				query=query.Skip(spec.Skip).Take(spec.Take);
+
+			query = spec.Includes.Aggregate(query,(currentQuery,includeExpression)=> currentQuery.Include(includeExpression));
 			// 1. _storeContext.Set<Product>().Where(x => x.Id == id).Include(x=> x.Brand)
 			// 2. _storeContext.Set<Product>().Where(x => x.Id == id).Include(x=> x.Brand).Include(x=> x.Category)
 

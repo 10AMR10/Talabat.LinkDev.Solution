@@ -11,6 +11,7 @@ namespace Talabat.APIs
 {
 	public class Program
 	{
+		
 		public async static Task Main(string[] args)
 		{
 
@@ -73,7 +74,7 @@ namespace Talabat.APIs
 			// Configure the HTTP request pipeline.
 			if (app.Environment.IsDevelopment())
 			{
-				app.UseMiddleware<ExceptionMiddelware>();
+				app.UseMiddleware<ExceptionMiddleware>();
 				app.UseSwagger();
 				app.UseSwaggerUI();
 			}
