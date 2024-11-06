@@ -7,11 +7,14 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="service.contract\" />
+    <Compile Remove="service.contract\**" />
+    <EmbeddedResource Remove="service.contract\**" />
+    <None Remove="service.contract\**" />
   </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="Microsoft.EntityFrameworkCore.Proxies" Version="6.0.23" />
+    <PackageReference Include="StackExchange.Redis" Version="2.8.16" />
   </ItemGroup>
 
 </Project>
