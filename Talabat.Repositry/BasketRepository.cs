@@ -26,14 +26,18 @@ namespace Talabat.Repositry
 		public async Task<CustomerBasket?> GetBasketAsync(string basketId)
 		{
 			var BasketJson= await _database.StringGetAsync(basketId);
-			return BasketJson.IsNull ? null : JsonSerializer.Deserialize<CustomerBasket>(BasketJson);
+			if(BasketJson.IsNull)
+				return null;
+			return  JsonSerializer.Deserialize<CustomerBasket>(BasketJson);
 		}
 
 		public async Task<CustomerBasket?> UpdateBasketAsync(CustomerBasket basket)
 		{
 			var basketJson=JsonSerializer.Serialize(basket);
 			var CreatedOrUpdated=await _database.StringSetAsync(basket.Id, basketJson,TimeSpan.FromDays(2));
-			return !CreatedOrUpdated ? null : await GetBasketAsync(basket.Id);
+			if (!CreatedOrUpdated)
+				return null;
+			return await GetBasketAsync(basket.Id);
 		}
 	}
 }
