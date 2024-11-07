@@ -1,4 +1,6 @@
 ﻿using AutoMapper;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Talabat.APIs.Dtos;
@@ -29,7 +31,7 @@ namespace Talabat.APIs.Controllers
 			_brandRepo = brandRepo;
 			_categoryRepo = categoryRepo;
 		}
-		
+		[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
 		[HttpGet] // the body of get => query string so => [FromQuery]
 		public async Task<ActionResult<Pagination<ProductToReturnDto>>> GetAllProducts([FromQuery] ProductSpecPrams productPrams) // uncle bob say more than 3 prams make class and make the object of these 3 prams
 		{

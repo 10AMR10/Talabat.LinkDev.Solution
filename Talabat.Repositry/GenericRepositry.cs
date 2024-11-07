@@ -12,6 +12,7 @@ using Talabat.Repositry.Data;
 
 namespace Talabat.Repositry
 {
+	//4
 	public class GenericRepositry<T> : IGenericRepositry<T> where T : BaseEntity
 	{
 		private readonly StoreContex _storeContext;
@@ -73,7 +74,9 @@ namespace Talabat.Repositry
 		{
 			return SpecificEvaluatorTest<T>.GetQuery(_storeContext.Set<T>(), spec);
 		}
+
 		
+
 		#endregion
 	}
 }

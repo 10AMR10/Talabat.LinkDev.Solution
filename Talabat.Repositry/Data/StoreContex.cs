@@ -24,7 +24,7 @@ namespace Talabat.Repositry.Data
         ///less constructor -> less construnctor -> prameterize constructor take object from DbContextOptions
         ///so we override on OnConifguring to add options 
         // chaning directly on prameterize constructor
-        public StoreContex(DbContextOptions options):base(options) 
+        public StoreContex(DbContextOptions<StoreContex> options):base(options) 
         {
             
         }

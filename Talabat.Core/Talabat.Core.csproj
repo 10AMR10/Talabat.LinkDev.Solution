@@ -7,11 +7,9 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="service.contract\" />
-  </ItemGroup>
-
-  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="6.0.23" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Proxies" Version="6.0.23" />
+    <PackageReference Include="StackExchange.Redis" Version="2.8.16" />
   </ItemGroup>
 
 </Project>

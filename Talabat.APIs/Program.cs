@@ -1,11 +1,17 @@
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using StackExchange.Redis;
 using Talabat.APIs.Errors;
+using Talabat.APIs.Extentions;
 using Talabat.APIs.Helpers;
 using Talabat.APIs.Middelwares;
+using Talabat.Core.Entities.Identity;
 using Talabat.Core.repositry.contract;
 using Talabat.Repositry;
 using Talabat.Repositry.Data;
+using Talabat.Repositry.Identity;
+using Talabat.Repositry.Identity.Seeding;
 
 namespace Talabat.APIs
 {
@@ -46,6 +52,17 @@ namespace Talabat.APIs
 					return new BadRequestObjectResult(response);
 				};
 			});
+			builder.Services.AddSingleton<IConnectionMultiplexer>((option) =>
+			{
+				var connection = builder.Configuration.GetConnectionString("RedisConneciton"); // get the conection string 
+				return ConnectionMultiplexer.Connect(connection); // make connection with redis
+			});
+			builder.Services.AddScoped(typeof(IBasketRepository),typeof(BasketRepository));
+			builder.Services.AddDbContext<AppIdentityDbContext>(options =>
+			{
+				options.UseSqlServer(builder.Configuration.GetConnectionString("IdentityConnection"));
+			});
+			builder.Services.AddIdentityServices(builder.Configuration);
 			#endregion
 
 			var app = builder.Build();
@@ -55,11 +72,15 @@ namespace Talabat.APIs
 			var service = scope.ServiceProvider;
 			//use to take object from this container
 			var _dbcontext = service.GetRequiredService<StoreContex>();
+			var _IdentityDbContest = service.GetRequiredService<AppIdentityDbContext>();
 			//ask clr to create object from DbContext explictly
 			var loggerFactory = service.GetRequiredService<ILoggerFactory>();
 			try
 			{
+				var userManger=service.GetRequiredService<UserManager<AppUser>>();	
 				await _dbcontext.Database.MigrateAsync();
+				await _IdentityDbContest.Database.MigrateAsync();
+				await AppIdentityDbContextSeeding.SeedIndentityAsync(userManger);
 				await StoreContextSeeding.SeedingAsync(_dbcontext);
 			}
 			catch (Exception ex)
