@@ -7,6 +7,7 @@ using Talabat.APIs.Middelwares;
 using Talabat.Core.repositry.contract;
 using Talabat.Repositry;
 using Talabat.Repositry.Data;
+using Talabat.Repositry.Identity;
 
 namespace Talabat.APIs
 {
@@ -53,6 +54,10 @@ namespace Talabat.APIs
 				return ConnectionMultiplexer.Connect(connection); // make connection with redis
 			});
 			builder.Services.AddScoped(typeof(IBasketRepository),typeof(BasketRepository));
+			builder.Services.AddDbContext<AppIdentityDbContext>(options =>
+			{
+				options.UseSqlServer(builder.Configuration.GetConnectionString("IdentityConnection"));
+			});
 			#endregion
 
 			var app = builder.Build();
@@ -62,11 +67,13 @@ namespace Talabat.APIs
 			var service = scope.ServiceProvider;
 			//use to take object from this container
 			var _dbcontext = service.GetRequiredService<StoreContex>();
+			var _IdentityDbContest = service.GetRequiredService<AppIdentityDbContext>();
 			//ask clr to create object from DbContext explictly
 			var loggerFactory = service.GetRequiredService<ILoggerFactory>();
 			try
 			{
 				await _dbcontext.Database.MigrateAsync();
+				await _IdentityDbContest.Database.MigrateAsync();
 				await StoreContextSeeding.SeedingAsync(_dbcontext);
 			}
 			catch (Exception ex)
