@@ -1,13 +1,17 @@
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using StackExchange.Redis;
 using Talabat.APIs.Errors;
+using Talabat.APIs.Extentions;
 using Talabat.APIs.Helpers;
 using Talabat.APIs.Middelwares;
+using Talabat.Core.Entities.Identity;
 using Talabat.Core.repositry.contract;
 using Talabat.Repositry;
 using Talabat.Repositry.Data;
 using Talabat.Repositry.Identity;
+using Talabat.Repositry.Identity.Seeding;
 
 namespace Talabat.APIs
 {
@@ -58,6 +62,7 @@ namespace Talabat.APIs
 			{
 				options.UseSqlServer(builder.Configuration.GetConnectionString("IdentityConnection"));
 			});
+			builder.Services.AddIdentityServices();
 			#endregion
 
 			var app = builder.Build();
@@ -72,8 +77,10 @@ namespace Talabat.APIs
 			var loggerFactory = service.GetRequiredService<ILoggerFactory>();
 			try
 			{
+				var userManger=service.GetRequiredService<UserManager<AppUser>>();	
 				await _dbcontext.Database.MigrateAsync();
 				await _IdentityDbContest.Database.MigrateAsync();
+				await AppIdentityDbContextSeeding.SeedIndentityAsync(userManger);
 				await StoreContextSeeding.SeedingAsync(_dbcontext);
 			}
 			catch (Exception ex)
