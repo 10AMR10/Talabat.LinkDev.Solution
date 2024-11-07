@@ -39,7 +39,8 @@ namespace Talabat.Service
 			var authKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration["JWT:Key"]));
 			// anotherclaims
 			var Token = new JwtSecurityToken(
-				issuer: configuration["JWT:ValidIssuer"], audience: configuration["JWT:validAudience"], 
+				issuer: configuration["JWT:ValidIssuer"],
+				audience: configuration["JWT:validAudience"], 
 				expires: DateTime.Now.AddDays(double.Parse(configuration["JWT:DurationInDays"])),
 				claims:authClaims,
 				signingCredentials: new SigningCredentials(authKey,SecurityAlgorithms.HmacSha256Signature)

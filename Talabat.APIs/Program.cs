@@ -62,7 +62,7 @@ namespace Talabat.APIs
 			{
 				options.UseSqlServer(builder.Configuration.GetConnectionString("IdentityConnection"));
 			});
-			builder.Services.AddIdentityServices();
+			builder.Services.AddIdentityServices(builder.Configuration);
 			#endregion
 
 			var app = builder.Build();
