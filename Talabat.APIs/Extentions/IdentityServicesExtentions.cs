@@ -13,6 +13,7 @@ namespace Talabat.APIs.Extentions
 				.AddEntityFrameworkStores<AppIdentityDbContext>(); // it implement interfaces 
 
 			services.AddAuthentication(); // allow DI for ( user manger , sign manger, role manger)
+			services.AddAuthorization();
 			return services;
 		}
 	}
