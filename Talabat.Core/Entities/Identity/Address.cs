@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Reflection.PortableExecutable;
 using System.Text;
@@ -16,6 +17,7 @@ namespace Talabat.Core.Entities.Identity
         public string City { get; set; }
         public string Country { get; set; }
         public AppUser appUser { get; set; }
+        [ForeignKey(nameof(AppUser))]
         public string AppUserId { get; set; }
     }
 }
