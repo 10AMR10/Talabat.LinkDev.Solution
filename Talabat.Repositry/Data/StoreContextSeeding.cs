@@ -10,7 +10,7 @@ using Talabat.Core.Entities.orderAgregrate;
 namespace Talabat.Repositry.Data
 {
     public class StoreContextSeeding
-    {
+    { //6
         public async static Task SeedingAsync(StoreContex _dbcontext)
         {
             if (_dbcontext.Set<ProductBrand>().Count() == 0)
