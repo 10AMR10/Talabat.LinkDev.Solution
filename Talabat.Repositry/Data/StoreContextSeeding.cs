@@ -5,6 +5,7 @@ using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
 using Talabat.Core.Entities;
+using Talabat.Core.Entities.orderAgregrate;
 
 namespace Talabat.Repositry.Data
 {
@@ -63,6 +64,23 @@ namespace Talabat.Repositry.Data
                     await _dbcontext.SaveChangesAsync();
                 }
             }
-        }
+			if (_dbcontext.Set<DeliveryMethod>().Count() == 0)
+			{
+				var deliveryData = File.ReadAllText("../Talabat.Repositry/Data/DataSeeding/delivery.json"); //reading file as string or json
+				var deliverys = JsonSerializer.Deserialize<List<DeliveryMethod>>(deliveryData); //transforming json to List of porduct brand
+				if (deliverys?.Count > 0)
+				{
+					//brands = brands.Select(x => new ProductBrand
+					//{
+					//	Name = x.Name,
+					//}).ToList();
+					foreach (var delivery in deliverys)
+					{
+						_dbcontext.Set<DeliveryMethod>().Add(delivery);
+					}
+					await _dbcontext.SaveChangesAsync();
+				}
+			}
+		}
     }
 }
