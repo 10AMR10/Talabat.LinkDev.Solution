@@ -4,6 +4,7 @@ using System.Linq;
 using System.Security.Cryptography.Xml;
 using System.Text;
 using System.Threading.Tasks;
+using Talabat.Core;
 using Talabat.Core.Entities;
 using Talabat.Core.Entities.orderAgregrate;
 using Talabat.Core.repositry.contract;
@@ -14,18 +15,14 @@ namespace Talabat.Service
 	public class OrderServices : IOrderServices // we implent it in service layer because it still doesn't Build
 	{
 		private readonly IBasketRepository _basketRepo;
-		private readonly IGenericRepositry<Product> _productRepo;
-		private readonly IGenericRepositry<DeliveryMethod> _deliveryRepo;
-		private readonly IGenericRepositry<Order> _orderRepo;
+		private readonly IUnitOfWork _unitOfWork;
 
-		public OrderServices(IBasketRepository basketRepo,IGenericRepositry<Product> productRepo,IGenericRepositry<DeliveryMethod> deliveryRepo,IGenericRepositry<Order> orderRepo)
-        {
+		public OrderServices(IBasketRepository basketRepo, IUnitOfWork unitOfWork) 
+		{
 			_basketRepo = basketRepo;
-			_productRepo = productRepo;
-			_deliveryRepo = deliveryRepo;
-			_orderRepo = orderRepo;
+			_unitOfWork = unitOfWork;
 		}
-        public async Task<Order> CreateOrderAsync(string buyerEmail,	 string basketId, int DeliveryMethodId, Address shippingAddress)
+        public async Task<Order?> CreateOrderAsync(string buyerEmail,	 string basketId, int DeliveryMethodId, Address shippingAddress)
 		{
 			var basket = await _basketRepo.GetBasketAsync(basketId); // i get basket to foul ordreItem
 
@@ -34,16 +31,19 @@ namespace Talabat.Service
 			{
 				foreach (var item in basket.Items)
 				{
-					var product=await _productRepo.GetAsync(item.Id);
+					var product=await _unitOfWork.GetRepositry<Product>().GetAsync(item.Id);
 					var productItem=new ProductOrderItem(product.Id,product.Name,product.PictureUrl);
 					var orderItem = new OrderItem(product.Id, productItem, item.quantity, product.Price);
 					orderItems.Add(orderItem);
 				} 
 			}
 			var subTotal= orderItems.Sum(x=> x.Price * x.Quantity);
-			var deliveryMethod= await _deliveryRepo.GetAsync(DeliveryMethodId);
+			var deliveryMethod= await _unitOfWork.GetRepositry<DeliveryMethod>().GetAsync(DeliveryMethodId);
 			var order= new Order(buyerEmail,shippingAddress,deliveryMethod,orderItems,subTotal);
-			await _orderRepo.AddAsync(order);
+			await _unitOfWork.GetRepositry<Order>().AddAsync(order);
+			var rows= await _unitOfWork.CompleteAsync();
+			if (rows <= 0)
+				return null;
 			return order;	
 
 		}
@@ -57,5 +57,7 @@ namespace Talabat.Service
 		{
 			throw new NotImplementedException();
 		}
-	}
+
+			this.unitOfWork = unitOfWork;
+		}
 }
