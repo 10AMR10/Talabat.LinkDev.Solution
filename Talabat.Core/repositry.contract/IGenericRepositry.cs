@@ -18,5 +18,8 @@ namespace Talabat.Core.repositry.contract
 		public Task<int> CountAllAsync(ISpecification<T> spec);
 		public Task<T?> GetSpecificAsyncTest(ISpecificationTest<T> spec);
 		public Task<IReadOnlyList<T>> GetAllSpecificAsyncTest(ISpecificationTest<T> spec);
+		public Task AddAsync(T item);
+		public void Delete(T item);
+		public void UpdateA(T item);
 	}
 }

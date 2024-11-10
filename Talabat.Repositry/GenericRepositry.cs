@@ -75,7 +75,15 @@ namespace Talabat.Repositry
 			return SpecificEvaluatorTest<T>.GetQuery(_storeContext.Set<T>(), spec);
 		}
 
-		
+		public async Task AddAsync(T item)
+			=>await _storeContext.Set<T>().AddAsync(item);
+
+		public void Delete(T item)
+			=> _storeContext.Set<T>().Remove(item);
+		public void UpdateA(T item)
+			=> _storeContext.Set<T>().Update(item);
+
+
 
 		#endregion
 	}
