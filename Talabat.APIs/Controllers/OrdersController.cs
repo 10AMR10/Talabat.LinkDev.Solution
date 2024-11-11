@@ -3,6 +3,8 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+
+using System.Collections.Generic;
 using System.Security.Claims;
 using Talabat.APIs.Dtos;
 using Talabat.APIs.Errors;
@@ -38,27 +40,30 @@ namespace Talabat.APIs.Controllers
 		}
 		//get order form user email
 		[ProducesResponseType(typeof(ApiResponse),StatusCodes.Status404NotFound)]
-		[ProducesResponseType(typeof(IReadOnlyList<Order>),StatusCodes.Status200OK)]
+		[ProducesResponseType(typeof(IReadOnlyList<OrderToReturnDto>),StatusCodes.Status200OK)]
 		[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
 		[HttpGet]
-		public async Task<ActionResult<IReadOnlyList<Order>>> GetOrders()
+		public async Task<ActionResult<IReadOnlyList<OrderToReturnDto>>> GetOrders()
 		{
 			var email = User.FindFirstValue(ClaimTypes.Email);
 			var orders= await _orderServices.GetOrdersForSpecficUserAsync(email);
 			if (orders is null) return NotFound(new ApiResponse(400));
-			return Ok(orders);
+			var mapped= _mapper.Map< IReadOnlyList < Order >, IReadOnlyList<OrderToReturnDto>>(orders);
+			return Ok(mapped);
 		}
 		//get order by id 
 		[ProducesResponseType(typeof(ApiResponse), StatusCodes.Status404NotFound)]
-		[ProducesResponseType(typeof(Order), StatusCodes.Status200OK)]
+		[ProducesResponseType(typeof(OrderToReturnDto), StatusCodes.Status200OK)]
 		[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
 		[HttpGet("{id}")]
-		public async Task<ActionResult<Order>> GetOrderById(int id)
+		public async Task<ActionResult<OrderToReturnDto>> GetOrderById(int id)
 		{
 			var email = User.FindFirstValue(ClaimTypes.Email);
 			var order = await _orderServices.GetOrderByIdForSpecficUserAsync(email,id);
 			if (order is null) return NotFound(new ApiResponse(400));
-			return Ok(order);
+			var mapped = _mapper.Map<Order, OrderToReturnDto>(order);
+
+			return Ok(mapped);
 		}
 
 
