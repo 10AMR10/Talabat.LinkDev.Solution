@@ -36,5 +36,31 @@ namespace Talabat.APIs.Controllers
 				return BadRequest(new ApiResponse(400, "Can't Create Order"));
 			return Ok(order);
 		}
+		//get order form user email
+		[ProducesResponseType(typeof(ApiResponse),StatusCodes.Status404NotFound)]
+		[ProducesResponseType(typeof(IReadOnlyList<Order>),StatusCodes.Status200OK)]
+		[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+		[HttpGet]
+		public async Task<ActionResult<IReadOnlyList<Order>>> GetOrders()
+		{
+			var email = User.FindFirstValue(ClaimTypes.Email);
+			var orders= await _orderServices.GetOrdersForSpecficUserAsync(email);
+			if (orders is null) return NotFound(new ApiResponse(400));
+			return Ok(orders);
+		}
+		//get order by id 
+		[ProducesResponseType(typeof(ApiResponse), StatusCodes.Status404NotFound)]
+		[ProducesResponseType(typeof(Order), StatusCodes.Status200OK)]
+		[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+		[HttpGet("{id}")]
+		public async Task<ActionResult<Order>> GetOrderById(int id)
+		{
+			var email = User.FindFirstValue(ClaimTypes.Email);
+			var order = await _orderServices.GetOrderByIdForSpecficUserAsync(email,id);
+			if (order is null) return NotFound(new ApiResponse(400));
+			return Ok(order);
+		}
+
+
 	}
 }
