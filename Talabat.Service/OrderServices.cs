@@ -33,7 +33,7 @@ namespace Talabat.Service
 				{
 					var product=await _unitOfWork.GetRepositry<Product>().GetAsync(item.Id);
 					var productItem=new ProductOrderItem(product.Id,product.Name,product.PictureUrl);
-					var orderItem = new OrderItem(product.Id, productItem, item.quantity, product.Price);
+					var orderItem = new OrderItem( productItem, item.quantity, product.Price);
 					orderItems.Add(orderItem);
 				} 
 			}
@@ -58,6 +58,6 @@ namespace Talabat.Service
 			throw new NotImplementedException();
 		}
 
-			this.unitOfWork = unitOfWork;
+			
 		}
 }

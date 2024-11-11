@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.EntityFrameworkCore;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -27,12 +28,24 @@ namespace Talabat.Repositry
 			var type = typeof(T).Name;
 			if (!_repositories.ContainsKey(type))
 			{
-				_repositories.Add(type, new GenericRepositry<T>(_storeContex));
+				var repo = new GenericRepositry<T>(_storeContex);
+				_repositories.Add(type, repo);
 			}
 			return _repositories[type] as IGenericRepositry<T>;	
 		}
-        public async Task<int> CompleteAsync()
-			=> await _storeContex.SaveChangesAsync();
+		public async Task<int> CompleteAsync()
+		{
+			try
+			{
+				return await _storeContex.SaveChangesAsync();
+			}
+			catch (DbUpdateException ex)
+			{
+				// Log the detailed error
+				Console.WriteLine($"DbUpdateException: {ex.InnerException?.Message ?? ex.Message}");
+				throw;
+			}
+		}
 
 		public async ValueTask DisposeAsync()
 			=> await _storeContex .DisposeAsync();

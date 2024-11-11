@@ -1,17 +1,21 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
 using StackExchange.Redis;
 using Talabat.APIs.Errors;
 using Talabat.APIs.Extentions;
 using Talabat.APIs.Helpers;
 using Talabat.APIs.Middelwares;
+using Talabat.Core;
 using Talabat.Core.Entities.Identity;
 using Talabat.Core.repositry.contract;
+using Talabat.Core.service.contract;
 using Talabat.Repositry;
 using Talabat.Repositry.Data;
 using Talabat.Repositry.Identity;
 using Talabat.Repositry.Identity.Seeding;
+using Talabat.Service;
 
 namespace Talabat.APIs
 {
@@ -29,14 +33,21 @@ namespace Talabat.APIs
 			builder.Services.AddControllers();
 			// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 			builder.Services.AddEndpointsApiExplorer();
-			builder.Services.AddSwaggerGen();
+			builder.Services.AddSwaggerGen(c =>
+			{
+				c.CustomSchemaIds(type => type.FullName); // This uses the full namespace and class name as the schemaId
+			});
 			// AddDbContex it follow sql server package so we should take referance from repositry
 			builder.Services.AddDbContext<StoreContex>((option) =>
 			{
 				option.UseLazyLoadingProxies()
 				.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
+				option.EnableSensitiveDataLogging();
+				option.LogTo(Console.WriteLine);
 			});
 			builder.Services.AddScoped(typeof(IGenericRepositry<>), typeof(GenericRepositry<>));
+			builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
+			builder.Services.AddScoped<IOrderServices, OrderServices>();
 			builder.Services.AddAutoMapper(typeof(MappingProfiles));
 			builder.Services.Configure<ApiBehaviorOptions>((option) =>
 			{
@@ -63,6 +74,7 @@ namespace Talabat.APIs
 				options.UseSqlServer(builder.Configuration.GetConnectionString("IdentityConnection"));
 			});
 			builder.Services.AddIdentityServices(builder.Configuration);
+			
 			#endregion
 
 			var app = builder.Build();

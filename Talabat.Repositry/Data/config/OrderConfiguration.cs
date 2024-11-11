@@ -20,6 +20,7 @@ namespace Talabat.Repositry.Data.config
 			builder.HasOne(o => o.DeliveryMethod)
 				.WithMany()
 				.OnDelete(DeleteBehavior.NoAction);
+			builder.HasMany(x => x.Items).WithOne();
 		}
 	}
 }
