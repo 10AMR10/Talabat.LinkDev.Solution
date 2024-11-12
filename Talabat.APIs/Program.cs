@@ -48,6 +48,8 @@ namespace Talabat.APIs
 			builder.Services.AddScoped(typeof(IGenericRepositry<>), typeof(GenericRepositry<>));
 			builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 			builder.Services.AddScoped<IOrderServices, OrderServices>();
+			builder.Services.AddScoped<IPaymentService, PaymentService>();
+
 			builder.Services.AddAutoMapper(typeof(MappingProfiles));
 			builder.Services.Configure<ApiBehaviorOptions>((option) =>
 			{

@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using System.Security.Claims;
 using Talabat.APIs.Dtos;
 using Talabat.APIs.Errors;
+using Talabat.Core;
 using Talabat.Core.Entities.orderAgregrate;
 using Talabat.Core.service.contract;
 
@@ -18,11 +19,13 @@ namespace Talabat.APIs.Controllers
 	{
 		private readonly IOrderServices _orderServices;
 		private readonly IMapper _mapper;
+		private readonly IUnitOfWork _unitOfWork;
 
-		public OrdersController(IOrderServices orderServices,IMapper mapper)
+		public OrdersController(IOrderServices orderServices,IMapper mapper,IUnitOfWork unitOfWork)
 		{
 			_orderServices = orderServices;
 			_mapper = mapper;
+			this._unitOfWork = unitOfWork;
 		}
 		// create order
 		[ProducesResponseType(typeof(Order),StatusCodes.Status200OK)]
@@ -65,7 +68,13 @@ namespace Talabat.APIs.Controllers
 
 			return Ok(mapped);
 		}
-
-
+		// Get all DeliveryMethod
+		[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+		[HttpGet("DeliveryMethod")]
+		public async Task<ActionResult<DeliveryMethod>> GetAllDeliveryMethod()
+		{
+			var deliveries=await _unitOfWork.GetRepositry<DeliveryMethod>().GetAllAsync();
+			return Ok(deliveries);
+		}
 	}
 }
