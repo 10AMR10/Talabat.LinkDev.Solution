@@ -1,4 +1,4 @@
-﻿namespace Talabat.APIs.Dtos
+﻿	namespace Talabat.APIs.Dtos
 {
 	public class AddressDto
 	{

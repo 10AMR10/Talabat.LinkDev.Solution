@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Principal;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -10,11 +11,14 @@ namespace Talabat.Core.Entities
 	{
 		public string Id { get; set; }
 		public List<BasketItem> Items { get; set; }
+        public string? PaymentIntentId { get; set; }
+        public string? ClientSecret { get; set; }
+        public int? DeliveryMethodId { get; set; }
 
-		// Parameterless constructor (for deserialization)
-		
+        // Parameterless constructor (for deserialization)
 
-		public CustomerBasket(string id)
+
+        public CustomerBasket(string id)
 		{
 			Id = id;
 			Items = new List<BasketItem>();

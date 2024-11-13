@@ -12,14 +12,17 @@ namespace Talabat.Repositry.Data.config
 	public class OrderConfiguration : IEntityTypeConfiguration<Order>
 	{
 		public void Configure(EntityTypeBuilder<Order> builder)
-		{
+		{											 //from database to api    
 			builder.Property(o => o.Status).HasConversion(os=> os.ToString(),os=>(OrderStatus) Enum.Parse(typeof(OrderStatus),os));
+			
+
 			builder.Property(o => o.SubTotal).HasColumnType("decimal(18,2)");
 
 			builder.OwnsOne(o => o.ShippingAddress, s => s.WithOwner());
 			builder.HasOne(o => o.DeliveryMethod)
 				.WithMany()
 				.OnDelete(DeleteBehavior.NoAction);
+			builder.HasMany(x => x.Items).WithOne();
 		}
 	}
 }

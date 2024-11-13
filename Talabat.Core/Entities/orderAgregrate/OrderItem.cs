@@ -13,9 +13,9 @@ namespace Talabat.Core.Entities.orderAgregrate
         {
             
         }
-        public OrderItem(int id, ProductOrderItem product, int quantity, decimal price)
+        public OrderItem( ProductOrderItem product, int quantity, decimal price)
 		{
-			Id = id;
+			
 			Product = product;
 			Quantity = quantity;
 			Price = price;
