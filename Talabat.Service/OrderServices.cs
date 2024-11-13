@@ -15,13 +15,16 @@ namespace Talabat.Service
 {
 	public class OrderServices : IOrderServices // we implent it in service layer because it still doesn't Build
 	{
+		// done
 		private readonly IBasketRepository _basketRepo;
 		private readonly IUnitOfWork _unitOfWork;
+		private readonly IPaymentService _paymentService;
 
-		public OrderServices(IBasketRepository basketRepo, IUnitOfWork unitOfWork) 
+		public OrderServices(IBasketRepository basketRepo, IUnitOfWork unitOfWork,IPaymentService paymentService) 
 		{
 			_basketRepo = basketRepo;
 			_unitOfWork = unitOfWork;
+			this._paymentService = paymentService;
 		}
         public async Task<Order?> CreateOrderAsync(string buyerEmail,	 string basketId, int DeliveryMethodId, Address shippingAddress)
 		{
@@ -40,7 +43,15 @@ namespace Talabat.Service
 			}
 			var subTotal= orderItems.Sum(x=> x.Price * x.Quantity);
 			var deliveryMethod= await _unitOfWork.GetRepositry<DeliveryMethod>().GetAsync(DeliveryMethodId);
-			var order= new Order(buyerEmail,shippingAddress,deliveryMethod,orderItems,subTotal);
+			var spec = new OrderWithPaymentIntentSpecification(basket.PaymentIntentId);
+			var exOrder =await _unitOfWork.GetRepositry<Order>().GetSpecificAsync(spec);
+			if(exOrder is not null)
+			{
+				 _unitOfWork.GetRepositry<Order>().Delete(exOrder);
+				await _paymentService.CreateOrUpdatePaymentIntentAsync(basketId);
+			}
+
+			var order= new Order(buyerEmail,shippingAddress,deliveryMethod,orderItems,subTotal,basket.PaymentIntentId);
 			await _unitOfWork.GetRepositry<Order>().AddAsync(order);
 			var rows= await _unitOfWork.CompleteAsync();
 			if (rows <= 0)
