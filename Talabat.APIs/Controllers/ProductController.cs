@@ -32,6 +32,7 @@ namespace Talabat.APIs.Controllers
 			_categoryRepo = categoryRepo;
 		}
 		[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+		[CachedAttribute(300)]
 		[HttpGet] // the body of get => query string so => [FromQuery]
 		public async Task<ActionResult<Pagination<ProductToReturnDto>>> GetAllProducts([FromQuery] ProductSpecPrams productPrams) // uncle bob say more than 3 prams make class and make the object of these 3 prams
 		{
