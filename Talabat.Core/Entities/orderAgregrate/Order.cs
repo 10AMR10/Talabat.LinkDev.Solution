@@ -10,6 +10,7 @@ namespace Talabat.Core.Entities.orderAgregrate
 {
 	public class Order:BaseEntity
 	{
+        //7
         public Order()
         {
             
@@ -35,7 +36,7 @@ namespace Talabat.Core.Entities.orderAgregrate
         public decimal SubTotal { get; set; }
         public decimal Total()
             => SubTotal+ DeliveryMethod.Cost    ;
-        public string PaymentIntentId { get; set; };
+        public string PaymentIntentId { get; set; }
 
     }
 }

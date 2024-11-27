@@ -14,8 +14,8 @@ namespace Talabat.APIs.Extentions
 		public static IServiceCollection AddIdentityServices(this IServiceCollection services,IConfiguration configuration)
 		{
 			services.AddScoped<ITokentService, TokentService>();
-			services.AddIdentity<AppUser, IdentityRole>()  //  CreateAsync() => interfaces
-				.AddEntityFrameworkStores<AppIdentityDbContext>(); // it implement interfaces 
+			services.AddIdentity<AppUser, IdentityRole>()  //  to the dependency injection (DI) container.
+				.AddEntityFrameworkStores<AppIdentityDbContext>(); // This line tells Identity to use Entity Framework Core for storing user and role data in the database.
 
 			services.AddAuthentication(options =>
 			{
